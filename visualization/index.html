@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One late observation, two branches</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1627;--panel:#14273e;--edge:#405d78;--text:#eff7fe;--muted:#bed2e3;--plus:#68e4c2;--minus:#ffb082;--literal:#f9d66d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:1rem/1.55 system-ui,sans-serif}
+main{max-width:69rem;margin:auto;padding:clamp(1rem,4vw,2.8rem)}
+h1{font-size:clamp(1.8rem,4.6vw,3.15rem);line-height:1.13;margin:0 0 .55rem}
+h2{font-size:1.35rem;margin:0 0 .55rem}
+p{margin:.3rem 0 1rem}
+.intro,.scope{color:var(--muted);max-width:73ch}
+.graph{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(16rem,.7fr);gap:1rem;align-items:start}
+.card{border:1px solid var(--edge);border-radius:1rem;background:var(--panel);min-width:0;padding:1rem}
+figure{margin:0}
+canvas{display:block;width:100%;height:auto;aspect-ratio:1.79}
+figcaption{color:var(--muted);line-height:1.45;font-size:.94rem}
+.key{display:inline-block;margin-right:.7rem;white-space:nowrap}
+.key::before{content:"";display:inline-block;background:currentColor;width:.7rem;height:.7rem;border-radius:50%;margin-right:.3rem}
+.plus{color:var(--plus)} .minus{color:var(--minus)} .literal{color:var(--literal)}
+label{display:block;color:var(--muted);font-weight:600}
+select,input[type=range],button{width:100%;margin:.17rem 0 .72rem;min-height:2.55rem;color:var(--text);font:inherit;accent-color:var(--plus)}
+select,button{border:1px solid var(--edge);border-radius:.45rem;background:#1d3550;padding:.3rem .55rem}
+button{font-weight:700;cursor:pointer;color:var(--plus)}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+table{width:100%;border-collapse:collapse;margin-top:.35rem}
+th,td{border-top:1px solid var(--edge);text-align:left;padding:.35rem 0;vertical-align:top}
+td{padding-left:.45rem;font-variant-numeric:tabular-nums}
+output{display:block;margin-top:.75rem;font-weight:700}
+.scope{margin-top:1.05rem}
+@media(max-width:730px){.graph{grid-template-columns:1fr}main{padding:1rem}}
+</style>
+<main>
+<h1>One late observation, two branches</h1>
+<p class="intro">Each branch reaches the same literal states. Their emission rows are shared. Compare the largest posterior for two small formulas at the fixed cutoff of one half.</p>
+<div class="graph">
+<figure class="card">
+<canvas id="trellis" width="720" height="402" role="img" aria-label="Three-time hidden Markov model"></canvas>
+<figcaption><span class="key plus">Plus branch</span><span class="key minus">Minus branch</span><span class="key literal">Literal emissions</span><br>The arrows show the best available routes for these emission choices.</figcaption>
+</figure>
+<section class="card">
+<h2>Evidence and posterior</h2>
+<label for="formula">Formula</label>
+<select id="formula"><option value="sat">x AND x</option><option value="unsat">x AND NOT x</option></select>
+<div class="controls">
+<div><label for="x">Success at x</label><select id="x"><option value="3">3/4</option><option value="1">1/4</option></select></div>
+<div><label for="nx">Success at NOT x</label><select id="nx"><option value="1">1/4</option><option value="3">3/4</option></select></div>
+</div>
+<button id="best" type="button">Choose optimal endpoints</button>
+<label for="angle">Rotate the diagram</label>
+<input type="range" id="angle" min="-30" max="30" value="14">
+<table aria-label="Exact probabilities"><tbody>
+<tr><th scope="row">Evidence given +</th><td id="plus"></td></tr>
+<tr><th scope="row">Evidence given −</th><td id="minus"></td></tr>
+<tr><th scope="row">Posterior of +</th><td id="posterior"></td></tr>
+</tbody></table>
+<output id="verdict" aria-live="polite"></output>
+</section>
+</div>
+<p class="scope">These two exact unsmoothed examples use a starting mass of 1/4 for the plus branch and 3/4 for the minus branch. The paper proves the general result with every local entry positive by shifting the starting mass and uniformly mixing each row while preserving a strict comparison at one half.</p>
+</main>
+<script>
+"use strict";
+const get=id=>document.getElementById(id);
+const formula=get("formula"), x=get("x"), nx=get("nx"), angle=get("angle"), canvas=get("trellis");
+const context=canvas.getContext("2d");
+const ink="#eff7fe", muted="#bed2e3", plus="#68e4c2", minus="#ffb082", gold="#f9d66d", bg="#0b1627";
+
+function exact(a,b){
+  let i=a,j=b;
+  while(j){const r=i%j;i=j;j=r;}
+  return b===i?String(a/i):String(a/i)+"/"+String(b/i);
+}
+function outcomes(a,b){
+  const impossible=formula.value==="unsat";
+  const largest=a>=b?0:1, smallest=a<=b?0:1;
+  return {routes:[0,impossible?1:0,largest,smallest],
+    highSum:a+(impossible?b:a)+Math.max(a,b), low:Math.min(a,b), impossible};
+}
+function run(){
+  const a=Number(x.value), b=Number(nx.value), {routes,highSum,low,impossible}=outcomes(a,b);
+  const total=highSum+9*low;
+  get("plus").textContent=exact(highSum,12);
+  get("minus").textContent=exact(low,4);
+  get("posterior").textContent=exact(highSum,total);
+  get("verdict").textContent=2*highSum===total?"Meets the cutoff of 1/2":"Below the cutoff of 1/2";
+  canvas.setAttribute("aria-label","Three hidden times. The plus posterior is "+exact(highSum,total)+".");
+  context.clearRect(0,0,canvas.width,canvas.height);
+  const turn=Number(angle.value)*Math.PI/180;
+  const project=([s,y,z])=>[s+.2*z*Math.sin(turn),211+y*Math.cos(turn)-z*Math.sin(turn)];
+  const start=[[105,-55,25],[105,83,-24]].map(project);
+  const units=[[356,-110,8],[356,-47,-13],[356,16,10],[356,91,-18]].map(project);
+  const literals=[[621,-65,-16],[621,88,18]].map(project);
+
+  function text(message,p,color,size=24){
+    context.font="700 "+size+"px system-ui";
+    context.textAlign="center";context.textBaseline="middle";context.fillStyle=color;
+    context.fillText(message,...p);
+  }
+  function node(p,message,color,width){
+    const [x,y]=p;
+    context.beginPath();context.roundRect(x-width/2,y-21,width,42,9);
+    context.fillStyle=bg;context.fill();context.strokeStyle=color;context.lineWidth=3;context.stroke();
+    text(message,p,color);
+  }
+  function link(from,to,color){
+    const [x,y]=from, [xx,yy]=to;
+    context.strokeStyle=color;context.fillStyle=color;context.lineWidth=4;
+    context.beginPath();context.moveTo(x+68,y);context.lineTo(xx-74,yy);context.stroke();
+    context.beginPath();context.moveTo(xx-74,yy);context.lineTo(xx-86,yy-6);
+    context.lineTo(xx-86,yy+6);context.closePath();context.fill();
+  }
+  [[105,"1 · START"],[356,"2 · ROUTE"],[621,"3 · EMIT"]].forEach(([c,t])=>text(t,[c,37],muted,24));
+  units.forEach((p,i)=>{
+    const color=i===3?minus:plus;
+    link(start[i===3?1:0],p,color);link(p,literals[routes[i]],color);
+  });
+  node(start[0],"+ : 1/4",plus,131);node(start[1],"− : 3/4",minus,131);
+  ["C1: x",impossible?"C2: NOT x":"C2: x","Variable +","Variable −"].forEach((t,i)=>
+    node(units[i],t,i===3?minus:plus,147));
+  node(literals[0],"x : "+exact(a,4),gold,143);
+  node(literals[1],"NOT x : "+exact(b,4),gold,143);
+}
+[formula,x,nx,angle].forEach(control=>control.addEventListener("input",run));
+get("best").addEventListener("click",()=>{
+  const candidates=[[3,1],[1,3],[3,3],[1,1]];
+  const best=candidates.reduce((winner,pair)=>{
+    const lhs=outcomes(...winner), rhs=outcomes(...pair);
+    return rhs.highSum*lhs.low>lhs.highSum*rhs.low?pair:winner;
+  });
+  [x.value,nx.value]=best.map(String);
+  run();
+});
+run();
+</script>
+</html>

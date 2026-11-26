@@ -1,0 +1,29 @@
+{
+  "title": "The complexity of strong-extension posterior smoothing",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "DannyExperiments"
+    }
+  ],
+  "description": "<p>Exact posterior threshold comparisons under the strong extension of separately specified rational hidden Markov models are NP-complete for existential comparisons and coNP-complete for their complements. Hardness holds at the fixed cutoff of one half, with three hidden times, one final binary observation and strictly positive local probabilities. The hidden alphabet grows with the input.</p><p>The reduction shares each literal's emission row between two initial branches. Paired variable units enforce opposite endpoints, and a clause unit must reach a high literal. A signed gap at one half survives uniform row mixing. Exact verification uses a vertex-row certificate and two forward passes. Every hard instance has evidence probability at least one quarter.</p><p>The literature audit distinguishes fully binary inference, filtering and prediction from the earlier-state query. It credits existing general-tree hardness and positivity perturbations. The exact replay checks endpoint choices and both single-state comparisons after mixing. Internally reviewed, not peer reviewed. No proof-assistant formalization is included.</p><p>Under human direction, ChatGPT Astra 6.2 (OpenAI) generated the discovery proof and original replay. OpenAI Codex performed the independent mathematical review. GPT-6.2 Sol (OpenAI) derived the fixed-half refinement, checked the literature and prepared the revised manuscript, expanded replay and worked illustration. DannyExperiments is the project's citation identity. The manuscript has no byline.</p><p>Release v1.0.0. https://github.com/DannyExperiments/strong-extension-posterior-smoothing/releases/tag/v1.0.0</p>",
+  "keywords": [
+    "credal networks",
+    "hidden Markov models",
+    "strong extension",
+    "posterior smoothing",
+    "NP-completeness"
+  ],
+  "license": "other-closed",
+  "notes": "All rights reserved. Publicly downloadable files are supplied without a repository-wide reuse license.",
+  "publication_date": "2026-11-27",
+  "version": "1.0.0",
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/DannyExperiments/strong-extension-posterior-smoothing/releases/tag/v1.0.0",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ]
+}

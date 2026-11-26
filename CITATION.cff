@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite DannyExperiments and identify the version used."
+title: "The complexity of strong-extension posterior smoothing"
+type: software
+authors:
+  - name: "DannyExperiments"
+repository-code: "https://github.com/DannyExperiments/strong-extension-posterior-smoothing"
+version: "1.0.0"
+date-released: "2026-11-27"
+doi: "10.5281/zenodo.24570844"
+abstract: "Exact posterior threshold comparisons under the strong extension of separately specified rational hidden Markov models are NP-complete for existential comparisons and coNP-complete for their complements."
+keywords:
+  - "credal networks"
+  - "hidden Markov models"
+  - "strong extension"
+  - "posterior smoothing"
+  - "NP-completeness"

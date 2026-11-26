@@ -1,0 +1,5 @@
+Worked cases x AND x and x AND NOT x: maxima 1/2 and 7/16.
+Full route/endpoint enumeration: 44 formulas, 24,064 precise models.
+Branchwise endpoint maximization: 200 seeded formulas.
+Positive-row model checks: 1,312 precise models, both single-state signs.
+PASS: fixed-half threshold, evidence bound, and positive perturbation.
