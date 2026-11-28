@@ -4,6 +4,7 @@ What can a later observation tell us about an earlier hidden state when each pro
 
 [Paper PDF](paper/manuscript.pdf) · [LaTeX source](paper/manuscript.tex) · [Catalog Q432](https://github.com/10m-u/open-problems-catalog/blob/ca8d4d44ba3db527f19f28928c240168f545ecfe/problems/mathematics/probability-stochastic-processes-part-1.md#q432) · [Original complexity question](https://doi.org/10.1613/jair.4355)
 
+[![Lean · endpoint mixtures](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/lean.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/lean.yml)
 [![Repository verification](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/verify.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/verify.yml)
 [![Replay verification](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/replay.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/replay.yml)
 [![PDF build](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/pdf.yml/badge.svg?branch=main)](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/actions/workflows/pdf.yml)
@@ -28,3 +29,7 @@ Prior work gives exact algorithms for fully binary polytrees and current or fina
 The [replay](REPRODUCIBILITY.md) checks exact endpoint models and directly compares each of two single-state signs after positive row mixing. [Review status](STATUS.md) · [Research disclosure](AI_DISCLOSURE.md)
 
 DannyExperiments is the preferred citation identity. [Release v1.0.0](https://github.com/DannyExperiments/strong-extension-posterior-smoothing/releases/tag/v1.0.0) · [Version DOI](https://doi.org/10.5281/zenodo.24570844) · [Citation metadata](CITATION.cff)
+
+## Lean verification
+
+A normalized finite mixture of rational emissions bounded by an upper endpoint attains that endpoint exactly when all positive-weight emissions attain it. This is the support implication used when recovering a truth assignment from the threshold gadget. The full posterior model, real-valued credal rows, the reduction and its complexity bounds are in the paper. [Lean source and replay](formalization/README.md)
